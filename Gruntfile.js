@@ -16,7 +16,7 @@ module.exports = function (grunt) {
                 separator: "\n"
             },
             js: {
-                src: ["src/**/*.js"],
+                src: ["src/core.js"],
                 dest: "dist/<%= pkg.name %>.js"
             }
         },
@@ -35,6 +35,12 @@ module.exports = function (grunt) {
                 options: {
                     livereload: true,
                 },
+            },
+            test: {
+                files: ["test/**/*.html", "test/**/*.md"],
+                options: {
+                    livereload: true,
+                }
             }
         }
     });

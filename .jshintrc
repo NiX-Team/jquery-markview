@@ -8,7 +8,7 @@
     "noarg": true,
     "undef": true,
     "unused": true,
-    "es3": true,
+    "esnext": true,
     "jquery": true,
     "browser": true,
     "globals": {
