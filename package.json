@@ -11,10 +11,12 @@
         "name": "Yotau Hong",
         "email": "crazymousethief@outlook.com"
     },
-    "licenses": [{
-        "type": "MIT",
-        "url": "http://www.opensource.org/licenses/MIT"
-    }],
+    "licenses": [
+        {
+            "type": "MIT",
+            "url": "http://www.opensource.org/licenses/MIT"
+        }
+    ],
     "bugs": {
         "url": "https://github.com/crazymousethief/jquery-markview/issues"
     },
@@ -25,7 +27,8 @@
         "prepublish": "grunt"
     },
     "dependencies": {
-        "jquery": "^3.1"
+        "jquery": "^3.1",
+        "marked": "^0.3.6"
     },
     "devDependencies": {
         "grunt": "^1.0.1",
