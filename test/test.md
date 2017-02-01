@@ -1,4 +1,4 @@
-# test1
+#   test1   ##
 > it's a test
 # test2
 ``` javascript
@@ -12,6 +12,8 @@ console.log("it's a test");
 ###### h6
 [it's a test](#test1)
 ### h3
+[it's a test](#test1)
+#### h4
 [it's a test](#test1)
 ## h2
 [it's a test](#test1)
