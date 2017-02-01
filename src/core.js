@@ -53,9 +53,24 @@
             'style': 'fold'
         }, options);
         return this.each(function () {
+            var $this = $(this);
             _loader(settings.url)
                 .then(function (data) {
-                    console.log(_parser(data));
+                    (function build($parent, data) {
+                        if (data.length !== 0) {
+                            data.forEach(function (element) {
+                                var $newDiv = build($('<div>'), element.childNodes).toggle();
+                                $parent.append(
+                                    $('<h' + element.level + '>').text(element.title)
+                                    .attr("style", $newDiv[0].childNodes.length === 0 ? "" : "cursor:pointer")
+                                    .click(function () {
+                                        $newDiv.slideToggle("fast");
+                                    }), $newDiv[0].childNodes.length === 0 ? null : $newDiv
+                                );
+                            }, this);
+                        }
+                        return $parent;
+                    }($this, _parser(data)));
                 });
         });
     };
