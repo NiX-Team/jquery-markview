@@ -1,4 +1,4 @@
-(function ($) {
+(function ($, marked) {
     var _loader = function (url) {
             var dfd = $.Deferred();
             $.ajax({
@@ -10,7 +10,7 @@
             return dfd.promise();
         },
         _parser = function (data) {
-            var pattern = /^[ ]*(\#+)[ ]+(\S+)[ ]*\#*$/gm;
+            var pattern = /^[ ]*(\#+)[ ]+(.*?)[ ]*\#*$/gm;
 
             var stack = [],
                 dataBlock = [];
@@ -59,13 +59,14 @@
                     (function build($parent, data) {
                         if (data.length !== 0) {
                             data.forEach(function (element) {
-                                var $newDiv = build($('<div>'), element.childNodes).toggle();
+                                var $newDiv = build($('<div>').append($(marked(element.data))), element.childNodes).toggle();
                                 $parent.append(
                                     $('<h' + element.level + '>').text(element.title)
                                     .attr("style", $newDiv[0].childNodes.length === 0 ? "" : "cursor:pointer")
                                     .click(function () {
                                         $newDiv.slideToggle("fast");
-                                    }), $newDiv[0].childNodes.length === 0 ? null : $newDiv
+                                    }),
+                                    $newDiv[0].childNodes.length === 0 ? null : $newDiv
                                 );
                             }, this);
                         }
@@ -74,4 +75,4 @@
                 });
         });
     };
-}(jQuery));
+}(jQuery, marked));
