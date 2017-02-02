@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <script src="../node_modules/jquery/dist/jquery.js"></script>
+    <script src="../node_modules/marked/marked.min.js"></script>
+    <script src="../dist/jquery-markview.js"></script>
+    <link href="../dist/jquery-markview.css" rel="stylesheet" type="text/css" />
+</head>
+
+<body>
+    <div id="test1"></div>
+    <div id="test2"></div>
+</body>
+<script type="text/javascript">
+    $('#test1').markview({
+        url: 'test.md'
+    });
+    $('#test2').markview({
+        url: 'uuid.md'
+    });
+</script>
+
+</html>
