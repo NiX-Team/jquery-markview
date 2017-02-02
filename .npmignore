@@ -2,3 +2,5 @@
 /.jshintrc
 /Gruntfile.js
 /test
+/yarn.lock
+/.npmignore
