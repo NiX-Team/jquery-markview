@@ -18,6 +18,19 @@ module.exports = function (grunt) {
             js: {
                 src: ["src/core.js"],
                 dest: "dist/<%= pkg.name %>.js"
+            },
+            src: {
+                src: ["src/css/github.css"],
+                dest: "dist/<%= pkg.name %>.css"
+            }
+        },
+        copy: {
+            css: {
+                expand: true,
+                src: "src/font/octicons.woff",
+                dest: "dist/",
+                flatten: true,
+                filter: "isFile"
             }
         },
         watch: {
@@ -28,7 +41,7 @@ module.exports = function (grunt) {
                 }
             },
             src: {
-                files: "src/**/*.js",
+                files: ["src/**/*.js", "src/**/*.css"],
                 tasks: [
                     "concat"
                 ],
@@ -47,8 +60,9 @@ module.exports = function (grunt) {
 
     grunt.loadNpmTasks('grunt-contrib-watch');
     grunt.loadNpmTasks('grunt-contrib-concat');
+    grunt.loadNpmTasks('grunt-contrib-copy');
 
-    grunt.registerTask('default', ['concat']);
-    grunt.registerTask('develop', ['concat', 'watch']);
+    grunt.registerTask('default', ['concat', 'copy']);
+    grunt.registerTask('develop', ['default', 'watch']);
 
 };
