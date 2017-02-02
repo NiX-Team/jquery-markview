@@ -3,6 +3,24 @@
     src: url("./octicons.woff");
 }
 
+.element-rotate-90deg {
+    -moz-transform: rotate(90deg);
+    -webkit-transform: rotate(90deg);
+    -o-transform: rotate(90deg);
+    -ms-transform: rotate(90deg);
+    transform: rotate(90deg);
+    transition: 0.2s;
+}
+
+.element-default {
+    -moz-transform: rotate(0deg);
+    -webkit-transform: rotate(0deg);
+    -o-transform: rotate(0deg);
+    -ms-transform: rotate(0deg);
+    transform: rotate(0deg);
+    transition: 0.2s;
+}
+
 * {
     box-sizing: border-box;
 }
@@ -225,16 +243,8 @@ pre {
     user-select: none;
 }
 
-.markdown-body .octicon-link:before {
-    content: '\f05c';
-}
-
-.markdown-body .octicon-fold:before {
-    content: '\f078';
-}
-
-.markdown-body .octicon-unfold:before {
-    content: '\f0a3';
+.octicon-chevron-right:before {
+    content: '\f078'
 }
 
 .markdown-body:before {
@@ -283,23 +293,12 @@ pre {
     line-height: 1.4;
 }
 
-.markdown-body h1 .octicon-fold,
-.markdown-body h2 .octicon-fold,
-.markdown-body h3 .octicon-fold,
-.markdown-body h4 .octicon-fold,
-.markdown-body h5 .octicon-fold,
-.markdown-body h6 .octicon-fold {
-    color: #000;
-    vertical-align: middle;
-    visibility: none;
-}
-
-.markdown-body h1 .octicon-unfold,
-.markdown-body h2 .octicon-unfold,
-.markdown-body h3 .octicon-unfold,
-.markdown-body h4 .octicon-unfold,
-.markdown-body h5 .octicon-unfold,
-.markdown-body h6 .octicon-unfold {
+.markdown-body h1 .octicon-chevron-right,
+.markdown-body h2 .octicon-chevron-right,
+.markdown-body h3 .octicon-chevron-right,
+.markdown-body h4 .octicon-chevron-right,
+.markdown-body h5 .octicon-chevron-right,
+.markdown-body h6 .octicon-chevron-right {
     color: #000;
     vertical-align: middle;
     visibility: none;
@@ -314,21 +313,12 @@ pre {
     text-decoration: none;
 }
 
-.markdown-body h1:hover .anchor .octicon-fold,
-.markdown-body h2:hover .anchor .octicon-fold,
-.markdown-body h3:hover .anchor .octicon-fold,
-.markdown-body h4:hover .anchor .octicon-fold,
-.markdown-body h5:hover .anchor .octicon-fold,
-.markdown-body h6:hover .anchor .octicon-fold {
-    visibility: visible;
-}
-
-.markdown-body h1:hover .anchor .octicon-unfold,
-.markdown-body h2:hover .anchor .octicon-unfold,
-.markdown-body h3:hover .anchor .octicon-unfold,
-.markdown-body h4:hover .anchor .octicon-unfold,
-.markdown-body h5:hover .anchor .octicon-unfold,
-.markdown-body h6:hover .anchor .octicon-unfold {
+.markdown-body h1:hover .anchor .octicon-chevron-right,
+.markdown-body h2:hover .anchor .octicon-chevron-right,
+.markdown-body h3:hover .anchor .octicon-chevron-right,
+.markdown-body h4:hover .anchor .octicon-chevron-right,
+.markdown-body h5:hover .anchor .octicon-chevron-right,
+.markdown-body h6:hover .anchor .octicon-chevron-right {
     visibility: visible;
 }
 
