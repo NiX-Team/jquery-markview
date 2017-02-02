@@ -62,8 +62,9 @@
                             data.forEach(function (element) {
                                 var $newDiv = build($('<div>').append($(marked(element.data))), element.childNodes).toggle();
                                 $parent.append(
-                                    $('<h' + element.level + '>').text(element.title)
+                                    $('<h' + element.level + '>').text(" " + element.title)
                                     .prepend(
+                                        $newDiv[0].childNodes.length === 0 ? null :
                                         $('<span>').addClass("octicon octicon-chevron-right element-default")
                                     )
                                     .attr("style", $newDiv[0].childNodes.length === 0 ? "" : "cursor:pointer")
