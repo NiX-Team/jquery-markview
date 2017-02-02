@@ -1,7 +1,7 @@
 {
     "name": "jquery-markview",
     "title": "jQuery MarkView",
-    "version": "0.0.2",
+    "version": "0.0.3",
     "description": "A jQuery Plugin to display markdown in some different ways",
     "repository": {
         "type": "git",
@@ -24,7 +24,7 @@
     "main": "dist/jquery.markview.js",
     "scripts": {
         "test": "echo \"Error: no test specified\" && exit 1",
-        "prepublish": "grunt"
+        "prepublish": "grunt release"
     },
     "dependencies": {
         "jquery": "^3.1",
@@ -34,6 +34,8 @@
         "grunt": "^1.0.1",
         "grunt-contrib-concat": "^1.0.1",
         "grunt-contrib-copy": "^1.0.0",
+        "grunt-contrib-cssmin": "^1.0.2",
+        "grunt-contrib-uglify": "^2.0.0",
         "grunt-contrib-watch": "^1.0.0"
     },
     "keywords": [
