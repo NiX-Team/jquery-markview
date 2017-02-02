@@ -56,22 +56,28 @@
             var $this = $(this);
             _loader(settings.url)
                 .then(function (data) {
+                    var $markdown = $('<article>').addClass("markdown-body");
                     (function build($parent, data) {
                         if (data.length !== 0) {
                             data.forEach(function (element) {
                                 var $newDiv = build($('<div>').append($(marked(element.data))), element.childNodes).toggle();
                                 $parent.append(
                                     $('<h' + element.level + '>').text(element.title)
+                                    .prepend(
+                                        $('<span>').addClass("octicon octicon-chevron-right element-default")
+                                    )
                                     .attr("style", $newDiv[0].childNodes.length === 0 ? "" : "cursor:pointer")
                                     .click(function () {
                                         $newDiv.slideToggle("fast");
+                                        $(this).children("span").toggleClass("element-rotate-90deg").toggleClass("element-default");
                                     }),
                                     $newDiv[0].childNodes.length === 0 ? null : $newDiv
                                 );
                             }, this);
                         }
                         return $parent;
-                    }($this, _parser(data)));
+                    }($markdown, _parser(data)));
+                    $this.append($markdown);
                 });
         });
     };
