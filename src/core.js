@@ -16,7 +16,6 @@
                 stack.push({
                     level: match[1].length,
                     title: match[2],
-                    children: []
                 });
             }
             dataBlock.push(data.substring(index, data.length));
@@ -28,29 +27,36 @@
             dataBlock.pop();
             stack.reverse();
 
-            return (function parse(parent, level) {
+            return (function parse(parent) {
                 while (stack.length) {
                     var node = stack[stack.length - 1];
-                    if (node.level > level) {
-                        parent.push($.extend(stack.pop(), {
-                            data: dataBlock.pop()
-                        }));
-                        parse(node.children, node.level);
+                    if (node.level > parent.level) {
+                        if (parent.children) {
+                            parent.children.push($.extend(stack.pop(), {
+                                data: dataBlock.pop()
+                            }));
+                        } else {
+                            parent.children = [];
+                        }
+                        parse(node, node.level);
                     } else {
                         return parent;
                     }
                 }
                 return parent;
-            }([], 0));
+            }({
+                level: 0,
+                title: ""
+            }));
         },
         _renderer = function (data, style) {
             var method = {
                 fold: function (data) {
                     var $markdown = $('<article>').addClass("markdown-body");
                     (function build($parent, data) {
-                        if (data.length !== 0) {
-                            data.forEach(function (element) {
-                                var $newDiv = build($('<div>').append($(marked(element.data))), element.children).toggle();
+                        if (data.children) {
+                            data.children.forEach(function (element) {
+                                var $newDiv = build($('<div>').append($(marked(element.data))), element).toggle();
                                 $parent.append(
                                     $('<h' + element.level + '>').text(" " + element.title)
                                     .prepend(
@@ -71,7 +77,10 @@
                     return $markdown;
                 },
                 tree: function (data) {
-                    var width = 500,
+                    if (data.children && data.children.length === 1) {
+                        data = data.children[0];
+                    }
+                    var width = 700,
                         height = 500;
                     var g = d3.select("body").append("svg")
                         .attr("width", width)
@@ -79,12 +88,9 @@
                         .append("g")
                         .attr("transform", "translate(40,0)");
                     var tree = d3.tree()
-                        .size([height, width]);
-                    var root = d3.hierarchy({
-                        children: data
-                    });
+                        .size([height, width - 200]);
+                    var root = d3.hierarchy(data);
                     tree(root);
-                    console.log(root);
                     g.selectAll(".link")
                         .data(root.descendants().slice(1))
                         .enter().append("path")
