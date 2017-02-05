@@ -9,10 +9,15 @@
             var pattern = /^[ ]*(\#+)[ ]+(.*?)[ ]*\#*$/gm;
 
             var stack = [],
-                dataBlock = [];
+                dataBlock = [],
+                levelWidth = Array.apply(null, Array(6)).map(function () {
+                    return 0;
+                });
+
             for (var match = pattern.exec(data), index = 0; match !== null; match = pattern.exec(data)) {
                 dataBlock.push(data.substring(index, match.index));
                 index = match.index;
+                levelWidth[match[1].length - 1]++;
                 stack.push({
                     level: match[1].length,
                     title: match[2],
@@ -46,13 +51,14 @@
                 return parent;
             }({
                 level: 0,
+                width: Math.max.apply(Math, levelWidth),
                 data: dataBlock.pop(),
                 title: ""
             }));
         },
-        _renderer = function (data, style, parent) {
+        _renderer = function (data, parentNode, config) {
             var method = {
-                fold: function (data) {
+                fold: function (data, parent, config) {
                     (function build($parent, data) {
                         if (data.children) {
                             data.children.forEach(function (element) {
@@ -73,22 +79,24 @@
                             }, this);
                         }
                         return $parent;
-                    }($(parent).addClass("markdown-body").append($(marked(data.data))), data));
+                    }($(parent).addClass("markdown-body")
+                        .append($(marked(data.data)))
+                        .attr("style", config.autosize ? '' : 'width:' + config.width + 'px;height:' + config.height + 'px;'),
+                        data));
                 },
-                tree: function (data, parent) {
-                    if (data.children && data.children.length === 1) {
-                        data = data.children[0];
-                    }
-                    var width = 700,
-                        height = 500;
+                tree: function (data, parent, config) {
+                    var height = config.autosize ? data.width * config.cellHeight : config.height,
+                        root = d3.hierarchy((data.children && data.children.length === 1) ? data.children[0] : data),
+                        width = config.autosize ? root.height * config.cellWidth : config.width;
                     var g = d3.select(parent).append("svg")
                         .attr("width", width)
                         .attr("height", height)
                         .append("g")
                         .attr("transform", "translate(40,0)");
                     var tree = d3.tree()
-                        .size([height, width - 200]);
-                    var root = d3.hierarchy(data);
+                        .size([height, width - 200]).separation(function (a, b) {
+                            return (a.parent === b.parent ? 1 : 2) / a.depth;
+                        });
                     tree(root);
                     g.selectAll(".link")
                         .data(root.descendants().slice(1))
@@ -124,18 +132,23 @@
                         });
                 }
             };
-            return (method[style](data, parent));
+            return (method[config.style](data, parentNode, config));
         };
     $.fn.markview = function (options) {
         var settings = $.extend({
             style: 'fold',
+            autosize: true,
+            width: "100",
+            height: "100",
+            cellWidth: 200,
+            cellHeight: 100,
             loadData: null
         }, options);
         return this.each(function () {
             var _this = this;
             _loader(settings)
                 .then(function (data) {
-                    _renderer(_parser(data), settings.style, _this);
+                    _renderer(_parser(data), _this, settings);
                 });
         });
     };
