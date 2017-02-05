@@ -1,15 +1,11 @@
 (function ($, marked) {
-    var _loader = function (url) {
-            var dfd = $.Deferred();
-            $.ajax({
-                url: url,
-                success: function (data) {
-                    dfd.resolve(data);
-                }
-            });
-            return dfd.promise();
+    var _loader = function (settings) {
+            return (settings.loadData());
         },
         _parser = function (data) {
+            if (data[data.length - 1] !== '\n') {
+                data += '\n';
+            }
             var pattern = /^[ ]*(\#+)[ ]+(.*?)[ ]*\#*$/gm;
 
             var stack = [],
@@ -26,7 +22,7 @@
             dataBlock.push(data.substring(index, data.length));
             for (var i = 0; i < dataBlock.length; i++) {
                 var str = dataBlock[i];
-                dataBlock[i] = str.substring(str.indexOf('\n') + 1, str.length - 1);
+                dataBlock[i] = str.substring(str.indexOf('\n') + 1, str.length);
             }
             dataBlock.reverse();
             dataBlock.pop();
@@ -46,16 +42,10 @@
                 }
                 return parent;
             }([], 0));
-        };
-    $.fn.markview = function (options) {
-        var settings = $.extend({
-            'url': 'README.md',
-            'style': 'fold'
-        }, options);
-        return this.each(function () {
-            var $this = $(this);
-            _loader(settings.url)
-                .then(function (data) {
+        },
+        _renderer = function (data, style) {
+            var method = {
+                fold: function (data) {
                     var $markdown = $('<article>').addClass("markdown-body");
                     (function build($parent, data) {
                         if (data.length !== 0) {
@@ -69,7 +59,7 @@
                                     )
                                     .attr("style", $newDiv[0].childNodes.length === 0 ? "" : "cursor:pointer")
                                     .click(function () {
-                                        $newDiv.slideToggle("fast");
+                                        $newDiv.toggle();
                                         $(this).children("span").toggleClass("element-rotate-90deg").toggleClass("element-default");
                                     }),
                                     $newDiv[0].childNodes.length === 0 ? null : $newDiv
@@ -77,8 +67,25 @@
                             }, this);
                         }
                         return $parent;
-                    }($markdown, _parser(data)));
-                    $this.append($markdown);
+                    }($markdown, data));
+                    return $markdown;
+                }
+            };
+            return (method[style](data));
+        };
+    $.fn.markview = function (options) {
+        var settings = $.extend({
+            style: 'fold',
+            loadData: null
+        }, options);
+        return this.each(function () {
+            var $this = $(this);
+            _loader(settings)
+                .then(function (data) {
+                    $this.append(_renderer(
+                        _parser(data),
+                        settings.style
+                    ));
                 });
         });
     };
