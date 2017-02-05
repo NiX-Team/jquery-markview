@@ -2,7 +2,7 @@
 <html>
 
 <head>
-    <script src="../node_modules/jquery/dist/jquery.js"></script>
+    <script src="../node_modules/jquery/dist/jquery.slim.js"></script>
     <script src="../node_modules/marked/marked.min.js"></script>
     <script src="../dist/jquery-markview.js"></script>
     <link href="../dist/jquery-markview.css" rel="stylesheet" type="text/css" />
@@ -14,10 +14,32 @@
 </body>
 <script type="text/javascript">
     $('#test1').markview({
-        url: 'test.md'
+        loadData: function () {
+            var dfd = $.Deferred(),
+                xmlhttp = new XMLHttpRequest();
+            xmlhttp.open("GET", "test.md", true);
+            xmlhttp.send();
+            xmlhttp.onreadystatechange = function () {
+                if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
+                    dfd.resolve(xmlhttp.responseText);
+                }
+            }
+            return dfd.promise();
+        }
     });
     $('#test2').markview({
-        url: 'uuid.md'
+        loadData: function () {
+            var dfd = $.Deferred(),
+                xmlhttp = new XMLHttpRequest();
+            xmlhttp.open("GET", "uuid.md", true);
+            xmlhttp.send();
+            xmlhttp.onreadystatechange = function () {
+                if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
+                    dfd.resolve(xmlhttp.responseText);
+                }
+            }
+            return dfd.promise();
+        }
     });
 </script>
 
