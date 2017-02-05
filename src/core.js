@@ -50,10 +50,9 @@
                 title: ""
             }));
         },
-        _renderer = function (data, style) {
+        _renderer = function (data, style, parent) {
             var method = {
                 fold: function (data) {
-                    var $markdown = $('<article>').addClass("markdown-body").append($(marked(data.data)));
                     (function build($parent, data) {
                         if (data.children) {
                             data.children.forEach(function (element) {
@@ -74,16 +73,15 @@
                             }, this);
                         }
                         return $parent;
-                    }($markdown, data));
-                    return $markdown;
+                    }($(parent).addClass("markdown-body").append($(marked(data.data))), data));
                 },
-                tree: function (data) {
+                tree: function (data, parent) {
                     if (data.children && data.children.length === 1) {
                         data = data.children[0];
                     }
                     var width = 700,
                         height = 500;
-                    var g = d3.select("body").append("svg")
+                    var g = d3.select(parent).append("svg")
                         .attr("width", width)
                         .attr("height", height)
                         .append("g")
@@ -126,7 +124,7 @@
                         });
                 }
             };
-            return (method[style](data));
+            return (method[style](data, parent));
         };
     $.fn.markview = function (options) {
         var settings = $.extend({
@@ -134,13 +132,10 @@
             loadData: null
         }, options);
         return this.each(function () {
-            var $this = $(this);
+            var _this = this;
             _loader(settings)
                 .then(function (data) {
-                    $this.append(_renderer(
-                        _parser(data),
-                        settings.style
-                    ));
+                    _renderer(_parser(data), settings.style, _this);
                 });
         });
     };
