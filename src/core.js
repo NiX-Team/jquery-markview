@@ -19,12 +19,12 @@
                 });
             }
             dataBlock.push(data.substring(index, data.length));
+            dataBlock[0] = "\n" + dataBlock[0];
             for (var i = 0; i < dataBlock.length; i++) {
                 var str = dataBlock[i];
                 dataBlock[i] = str.substring(str.indexOf('\n') + 1, str.length);
             }
             dataBlock.reverse();
-            dataBlock.pop();
             stack.reverse();
 
             return (function parse(parent) {
@@ -46,13 +46,14 @@
                 return parent;
             }({
                 level: 0,
+                data: dataBlock.pop(),
                 title: ""
             }));
         },
         _renderer = function (data, style) {
             var method = {
                 fold: function (data) {
-                    var $markdown = $('<article>').addClass("markdown-body");
+                    var $markdown = $('<article>').addClass("markdown-body").append($(marked(data.data)));
                     (function build($parent, data) {
                         if (data.children) {
                             data.children.forEach(function (element) {
