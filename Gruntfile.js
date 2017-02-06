@@ -20,7 +20,7 @@ module.exports = function (grunt) {
                 dest: "dist/<%= pkg.name %>.js"
             },
             css: {
-                src: ["src/css/github.css"],
+                src: ["src/css/*.css"],
                 dest: "dist/<%= pkg.name %>.css"
             },
             release: {

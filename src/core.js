@@ -9,84 +9,147 @@
             var pattern = /^[ ]*(\#+)[ ]+(.*?)[ ]*\#*$/gm;
 
             var stack = [],
-                dataBlock = [];
+                dataBlock = [],
+                levelWidth = Array.apply(null, Array(6)).map(function () {
+                    return 0;
+                });
+
             for (var match = pattern.exec(data), index = 0; match !== null; match = pattern.exec(data)) {
                 dataBlock.push(data.substring(index, match.index));
                 index = match.index;
+                levelWidth[match[1].length - 1]++;
                 stack.push({
                     level: match[1].length,
                     title: match[2],
-                    childNodes: []
                 });
             }
             dataBlock.push(data.substring(index, data.length));
+            dataBlock[0] = "\n" + dataBlock[0];
             for (var i = 0; i < dataBlock.length; i++) {
                 var str = dataBlock[i];
                 dataBlock[i] = str.substring(str.indexOf('\n') + 1, str.length);
             }
             dataBlock.reverse();
-            dataBlock.pop();
             stack.reverse();
 
-            return (function parse(parent, level) {
+            return (function parse(parent) {
                 while (stack.length) {
                     var node = stack[stack.length - 1];
-                    if (node.level > level) {
-                        parent.push($.extend(stack.pop(), {
-                            data: dataBlock.pop()
-                        }));
-                        parse(node.childNodes, node.level);
+                    if (node.level > parent.level) {
+                        if (parent.children) {
+                            parent.children.push($.extend(stack.pop(), {
+                                data: dataBlock.pop()
+                            }));
+                        } else {
+                            parent.children = [];
+                        }
+                        parse(node, node.level);
                     } else {
                         return parent;
                     }
                 }
                 return parent;
-            }([], 0));
+            }({
+                level: 0,
+                width: Math.max.apply(Math, levelWidth),
+                data: dataBlock.pop(),
+                title: ""
+            }));
         },
-        _renderer = function (data, style) {
+        _renderer = function (data, parentNode, config) {
             var method = {
-                fold: function (data) {
-                    var $markdown = $('<article>').addClass("markdown-body");
+                fold: function (data, parent, config) {
                     (function build($parent, data) {
-                        if (data.length !== 0) {
-                            data.forEach(function (element) {
-                                var $newDiv = build($('<div>').append($(marked(element.data))), element.childNodes).toggle();
+                        if (data.children) {
+                            data.children.forEach(function (element) {
+                                var $newDiv = build($('<div>').append($(marked(element.data))), element).toggle();
                                 $parent.append(
                                     $('<h' + element.level + '>').text(" " + element.title)
                                     .prepend(
-                                        $newDiv[0].childNodes.length === 0 ? null :
+                                        $newDiv[0].children.length === 0 ? null :
                                         $('<span>').addClass("octicon octicon-chevron-right element-default")
                                     )
-                                    .attr("style", $newDiv[0].childNodes.length === 0 ? "" : "cursor:pointer")
+                                    .attr("style", $newDiv[0].children.length === 0 ? "" : "cursor:pointer")
                                     .click(function () {
                                         $newDiv.toggle();
                                         $(this).children("span").toggleClass("element-rotate-90deg").toggleClass("element-default");
                                     }),
-                                    $newDiv[0].childNodes.length === 0 ? null : $newDiv
+                                    $newDiv[0].children.length === 0 ? null : $newDiv
                                 );
                             }, this);
                         }
                         return $parent;
-                    }($markdown, data));
-                    return $markdown;
+                    }($(parent).addClass("markdown-body")
+                        .append($(marked(data.data)))
+                        .attr("style", config.autosize ? '' : 'width:' + config.width + 'px;height:' + config.height + 'px;'),
+                        data));
+                },
+                tree: function (data, parent, config) {
+                    var height = config.autosize ? data.width * config.cellHeight : config.height,
+                        root = d3.hierarchy((data.children && data.children.length === 1) ? data.children[0] : data),
+                        width = config.autosize ? root.height * config.cellWidth : config.width;
+                    var g = d3.select(parent).append("svg")
+                        .attr("width", width)
+                        .attr("height", height)
+                        .append("g")
+                        .attr("transform", "translate(40,0)");
+                    var tree = d3.tree()
+                        .size([height, width - 200]).separation(function (a, b) {
+                            return (a.parent === b.parent ? 1 : 2) / a.depth;
+                        });
+                    tree(root);
+                    g.selectAll(".link")
+                        .data(root.descendants().slice(1))
+                        .enter().append("path")
+                        .attr("class", "link")
+                        .attr("d", function (d) {
+                            return "M" + d.y + "," + d.x +
+                                "C" + (d.parent.y + 100) + "," + d.x +
+                                " " + (d.parent.y + 100) + "," + d.parent.x +
+                                " " + d.parent.y + "," + d.parent.x;
+                        });
+                    var node = g.selectAll(".node")
+                        .data(root.descendants())
+                        .enter().append("g")
+                        .attr("class", function (d) {
+                            return "node" + (d.children ? " node--internal" : " node--leaf");
+                        })
+                        .attr("transform", function (d) {
+                            return "translate(" + d.y + "," + d.x + ")";
+                        });
+                    node.append("circle")
+                        .attr("r", 4.5);
+                    node.append("text")
+                        .attr("dy", 3)
+                        .attr("x", function (d) {
+                            return d.children ? -8 : 8;
+                        })
+                        .style("text-anchor", function (d) {
+                            return d.children ? "end" : "start";
+                        })
+                        .text(function (d) {
+                            return d.data.title;
+                        });
                 }
             };
-            return (method[style](data));
+            return (method[config.style](data, parentNode, config));
         };
     $.fn.markview = function (options) {
         var settings = $.extend({
             style: 'fold',
+            autosize: true,
+            width: "100",
+            height: "100",
+            cellWidth: 200,
+            cellHeight: 100,
             loadData: null
         }, options);
         return this.each(function () {
-            var $this = $(this);
+            var _this = this;
             _loader(settings)
                 .then(function (data) {
-                    $this.append(_renderer(
-                        _parser(data),
-                        settings.style
-                    ));
+                    _renderer(_parser(data), _this, settings);
                 });
         });
     };
-}(jQuery, marked));
+}(jQuery, marked, d3));
