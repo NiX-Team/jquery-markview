@@ -4,7 +4,8 @@ var pkg = require('./package.json'),
     cleanCSS = require('gulp-clean-css'),
     concat = require('gulp-concat'),
     uglify = require('gulp-uglify'),
-    header = require('gulp-header');
+    header = require('gulp-header'),
+    browserSync = require('browser-sync').create();
 
 var banner = ['/**',
     ' * <%= pkg.title %> - <%= pkg.description %>',
@@ -48,6 +49,10 @@ gulp.task('minify-js', function () {
         }))
         .pipe(gulp.dest('dist'));
 });
+gulp.task('browser-reload', ['default'], function (done) {
+    browserSync.reload();
+    done();
+});
 
 gulp.task('default', ['concat-css', 'concat-js'], function () {
     gulp.src("src/font/octicons.woff").pipe(gulp.dest('dist'));
@@ -56,5 +61,10 @@ gulp.task('release', ['default'], function () {
     gulp.start(['minify-js', 'minify-css']);
 });
 gulp.task('develop', function () {
-    gulp.watch("src/**/*", ['default']);
+    browserSync.init({
+        server: {
+            baseDir: "./"
+        }
+    });
+    gulp.watch(["src/**/*", "test/**/*"], ['browser-reload']);
 });
