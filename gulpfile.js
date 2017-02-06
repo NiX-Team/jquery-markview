@@ -8,10 +8,10 @@ var pkg = require('./package.json'),
 
 var banner = ['/**',
     ' * <%= pkg.title %> - <%= pkg.description %>',
-    ' * @authors <%= pkg.authors %>',
+    ' * @authors <%= pkg.author.name %>',
     ' * @version v<%= pkg.version %>',
     ' * @link <%= pkg.homepage %>',
-    ' * @license <%= pkg.license %>',
+    ' * @license <%= pkg.licenses.type %>',
     ' */',
     ''
 ].join('\n');
@@ -26,7 +26,7 @@ gulp.task('concat-js', function () {
         .pipe(concat(`${pkg.name}.js`))
         .pipe(gulp.dest('dist'));
 });
-gulp.task('minify-css', ['concat-css'], function () {
+gulp.task('minify-css', function () {
     return gulp.src(`dist/${pkg.name}.css`)
         .pipe(rename({
             suffix: '.min'
@@ -37,7 +37,7 @@ gulp.task('minify-css', ['concat-css'], function () {
         }))
         .pipe(gulp.dest('dist'));
 });
-gulp.task('minify-js', ['concat-js'], function () {
+gulp.task('minify-js', function () {
     return gulp.src(`dist/${pkg.name}.js`)
         .pipe(rename({
             suffix: '.min'
@@ -48,6 +48,13 @@ gulp.task('minify-js', ['concat-js'], function () {
         }))
         .pipe(gulp.dest('dist'));
 });
-gulp.task('default', function () {
-    gulp.start('minify-css', 'minify-js');
+
+gulp.task('default', ['concat-css', 'concat-js'], function () {
+    gulp.src("src/font/octicons.woff").pipe(gulp.dest('dist'));
+});
+gulp.task('release', ['default'], function () {
+    gulp.start(['minify-js', 'minify-css']);
+});
+gulp.task('develop', function () {
+    gulp.watch("src/**/*", ['default']);
 });

@@ -4,3 +4,4 @@
 /test
 /yarn.lock
 /.npmignore
+/gulpfile.js

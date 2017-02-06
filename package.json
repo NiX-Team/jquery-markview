@@ -2,7 +2,6 @@
     "name": "jquery-markview",
     "title": "jQuery MarkView",
     "version": "0.0.3",
-    "authors": "crazymousethief",
     "description": "A jQuery Plugin to display markdown in some different ways",
     "repository": {
         "type": "git",
@@ -12,10 +11,10 @@
         "name": "Yotau Hong",
         "email": "crazymousethief@outlook.com"
     },
-    "licenses": [{
+    "licenses": {
         "type": "MIT",
         "url": "http://www.opensource.org/licenses/MIT"
-    }],
+    },
     "bugs": {
         "url": "https://github.com/crazymousethief/jquery-markview/issues"
     },
@@ -23,7 +22,7 @@
     "main": "dist/jquery.markview.js",
     "scripts": {
         "test": "echo \"Error: no test specified\" && exit 1",
-        "prepublish": "grunt release"
+        "prepublish": "gulp release"
     },
     "dependencies": {
         "d3": "^4.5.0",
