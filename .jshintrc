@@ -11,6 +11,7 @@
     "esnext": true,
     "jquery": true,
     "browser": true,
+    "node": true,
     "globals": {
         "console": true,
         "marked": true,
