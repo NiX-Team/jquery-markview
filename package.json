@@ -11,12 +11,10 @@
         "name": "Yotau Hong",
         "email": "crazymousethief@outlook.com"
     },
-    "licenses": [
-        {
-            "type": "MIT",
-            "url": "http://www.opensource.org/licenses/MIT"
-        }
-    ],
+    "licenses": {
+        "type": "MIT",
+        "url": "http://www.opensource.org/licenses/MIT"
+    },
     "bugs": {
         "url": "https://github.com/crazymousethief/jquery-markview/issues"
     },
@@ -24,7 +22,7 @@
     "main": "dist/jquery.markview.js",
     "scripts": {
         "test": "echo \"Error: no test specified\" && exit 1",
-        "prepublish": "grunt release"
+        "prepublish": "gulp release"
     },
     "dependencies": {
         "d3": "^4.5.0",
@@ -32,12 +30,13 @@
         "marked": "^0.3.6"
     },
     "devDependencies": {
-        "grunt": "^1.0.1",
-        "grunt-contrib-concat": "^1.0.1",
-        "grunt-contrib-copy": "^1.0.0",
-        "grunt-contrib-cssmin": "^1.0.2",
-        "grunt-contrib-uglify": "^2.0.0",
-        "grunt-contrib-watch": "^1.0.0"
+        "browser-sync": "^2.18.7",
+        "gulp": "^3.9.1",
+        "gulp-clean-css": "^2.4.0",
+        "gulp-concat": "^2.6.1",
+        "gulp-header": "^1.8.8",
+        "gulp-rename": "^1.2.2",
+        "gulp-uglify": "^2.0.1"
     },
     "keywords": [
         "markdown",
