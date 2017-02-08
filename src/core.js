@@ -12,12 +12,18 @@
                 dataBlock = [],
                 levelWidth = Array.apply(null, Array(6)).map(function () {
                     return 0;
+                }),
+                levelLength = Array.apply(null, Array(6)).map(function () {
+                    return 0;
                 });
 
             for (var match = pattern.exec(data), index = 0; match !== null; match = pattern.exec(data)) {
                 dataBlock.push(data.substring(index, match.index));
                 index = match.index;
                 levelWidth[match[1].length - 1]++;
+                if (match[2].length > levelLength[match[1].length - 1]) {
+                    levelLength[match[1].length - 1] = match[2].length;
+                }
                 stack.push({
                     level: match[1].length,
                     title: match[2],
@@ -52,6 +58,13 @@
             }({
                 level: 0,
                 width: Math.max.apply(Math, levelWidth),
+                lastLevelLength: (function () {
+                    for (var i = 5; i >= 0; i--) {
+                        if (levelLength[i]) {
+                            return levelLength[i];
+                        }
+                    }
+                }()),
                 data: dataBlock.pop(),
                 title: ""
             }));
@@ -67,13 +80,13 @@
                                     $('<h' + element.level + '>').text(" " + element.title)
                                     .prepend(
                                         $newDiv[0].children.length === 0 ? null :
-                                        $('<svg height="32" class="octicon octicon-chevron-right" viewBox="0 0 8 16" version="1.1" width="16" aria-hidden="true"><path fill-rule="evenodd" d="M7.5 8l-5 5L1 11.5 4.75 8 1 4.5 2.5 3z"></path></svg>')
+                                        $('<svg height="16" class="octicon octicon-triangle-down" viewBox="0 0 12 16" version="1.1" width="24" aria-hidden="true"><path fill-rule="evenodd" d="M0 5l6 6 6-6z"></path></svg>')
                                         .addClass("element-default")
                                     )
                                     .attr("style", $newDiv[0].children.length === 0 ? "" : "cursor:pointer")
                                     .click(function () {
                                         $newDiv.toggle();
-                                        $(this).children("svg").toggleClass("element-rotate-90deg").toggleClass("element-default");
+                                        $(this).children("svg").toggleClass("element-rotate-180deg").toggleClass("element-default");
                                     }),
                                     $newDiv[0].children.length === 0 ? null : $newDiv
                                 );
@@ -89,13 +102,14 @@
                     var height = config.autosize ? data.width * config.cellHeight : config.height,
                         root = d3.hierarchy((data.children && data.children.length === 1) ? data.children[0] : data),
                         width = config.autosize ? root.height * config.cellWidth : config.width;
+                    var delta = (data.lastLevelLength + root.data.title.length) * 4;
                     var g = d3.select(parent).append("svg")
-                        .attr("width", width)
+                        .attr("width", width + delta)
                         .attr("height", height)
                         .append("g")
-                        .attr("transform", "translate(40,0)");
+                        .attr("transform", "translate(100,0)");
                     var tree = d3.tree()
-                        .size([height, width - 200]).separation(function (a, b) {
+                        .size([height, width - delta]).separation(function (a, b) {
                             return (a.parent === b.parent ? 1 : 2) / a.depth;
                         });
                     tree(root);
@@ -141,8 +155,8 @@
             autosize: true,
             width: "100",
             height: "100",
-            cellWidth: 200,
-            cellHeight: 100,
+            cellWidth: 250,
+            cellHeight: 50,
             loadData: null
         }, options);
         return this.each(function () {
