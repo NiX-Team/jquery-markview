@@ -54,13 +54,11 @@ gulp.task('browser-reload', ['default'], function (done) {
     done();
 });
 
-gulp.task('default', ['concat-css', 'concat-js'], function () {
-    gulp.src("src/font/octicons.woff").pipe(gulp.dest('dist'));
-});
+gulp.task('default', ['concat-css', 'concat-js']);
 gulp.task('release', ['default'], function () {
     gulp.start(['minify-js', 'minify-css']);
 });
-gulp.task('develop', function () {
+gulp.task('develop', ['default'], function () {
     browserSync.init({
         server: {
             baseDir: "./"
