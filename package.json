@@ -1,7 +1,7 @@
 {
     "name": "jquery-markview",
     "title": "jQuery MarkView",
-    "version": "0.0.3",
+    "version": "0.0.4",
     "description": "A jQuery Plugin to display markdown in some different ways",
     "repository": {
         "type": "git",
