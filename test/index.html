@@ -1,9 +1,11 @@
 <!DOCTYPE html>
 <html>
+<meta charset="utf-8">
 
 <head>
-    <script src="../node_modules/jquery/dist/jquery.js"></script>
+    <script src="../node_modules/jquery/dist/jquery.slim.js"></script>
     <script src="../node_modules/marked/marked.min.js"></script>
+    <script src="../node_modules/d3/build/d3.min.js"></script>
     <script src="../dist/jquery-markview.js"></script>
     <link href="../dist/jquery-markview.css" rel="stylesheet" type="text/css" />
 </head>
@@ -11,14 +13,39 @@
 <body>
     <div id="test1"></div>
     <div id="test2"></div>
+    <div id="test3"></div>
 </body>
 <script type="text/javascript">
+    var promise = function (url) {
+        var dfd = $.Deferred(),
+            xmlhttp = new XMLHttpRequest();
+        xmlhttp.open("GET", url, true);
+        xmlhttp.send();
+        xmlhttp.onreadystatechange = function () {
+            if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
+                dfd.resolve(xmlhttp.responseText);
+            }
+        }
+        return dfd.promise();
+    }
+
     $('#test1').markview({
-        url: 'test.md'
+        loadData: function () {
+            return promise('test.md');
+        }
     });
     $('#test2').markview({
-        url: 'uuid.md'
+        loadData: function () {
+            return promise('uuid.md');
+
+        }
     });
+    $('#test3').markview({
+        style: 'tree',
+        loadData: function () {
+            return promise('tree.md');
+        }
+    })
 </script>
 
 </html>
