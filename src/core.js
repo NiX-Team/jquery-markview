@@ -67,13 +67,13 @@
                                     $('<h' + element.level + '>').text(" " + element.title)
                                     .prepend(
                                         $newDiv[0].children.length === 0 ? null :
-                                        $('<svg height="32" class="octicon octicon-chevron-right" viewBox="0 0 8 16" version="1.1" width="16" aria-hidden="true"><path fill-rule="evenodd" d="M7.5 8l-5 5L1 11.5 4.75 8 1 4.5 2.5 3z"></path></svg>')
+                                        $('<svg height="16" class="octicon octicon-triangle-down" viewBox="0 0 12 16" version="1.1" width="24" aria-hidden="true"><path fill-rule="evenodd" d="M0 5l6 6 6-6z"></path></svg>')
                                         .addClass("element-default")
                                     )
                                     .attr("style", $newDiv[0].children.length === 0 ? "" : "cursor:pointer")
                                     .click(function () {
                                         $newDiv.toggle();
-                                        $(this).children("svg").toggleClass("element-rotate-90deg").toggleClass("element-default");
+                                        $(this).children("svg").toggleClass("element-rotate-180deg").toggleClass("element-default");
                                     }),
                                     $newDiv[0].children.length === 0 ? null : $newDiv
                                 );
