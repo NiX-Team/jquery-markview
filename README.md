@@ -16,11 +16,11 @@ Ensure these library is included.
 
 ``` json
 "dependencies": {
-        "d3": "^4.5.0",
-        "jquery": "^3.1",
-        "marked": "^0.3.6"
-    }
-``` 
+    "d3": "^4.5.0",
+    "jquery": "^3.1",
+    "marked": "^0.3.6"
+}
+```
 
 Include `jquery-markview.min.js`, `jquery-markview.min.css` files into the web page.
 
@@ -40,7 +40,7 @@ $('#jquery-markview').markview({
 
 The config object may contain following options (default values are specified below):
 
-``` json
+``` javascript
 {
     style: 'fold',
     autosize: true,
